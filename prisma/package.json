@@ -1,0 +1,19 @@
+{
+  "name": "prisma",
+  "version": "1.0.0",
+  "description": "Prisma configuration for Dashboard Financiero",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.17.1",
+    "prisma": "^6.17.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}

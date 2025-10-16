@@ -1,0 +1,178 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "auth"]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  companyUsers CompanyUser[]
+  transactions Transaction[]
+  checks       Check[]
+  credits      Credit[]
+  suppliers    Supplier[]
+
+  @@map("users")
+  @@schema("public")
+}
+
+model Company {
+  id       String @id @default(cuid())
+  name     String
+  logo     String?
+  currency String @default("CLP") // CLP, USD, EUR, AED
+  timezone String @default("America/Santiago")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  companyUsers CompanyUser[]
+  transactions Transaction[]
+  checks       Check[]
+  credits      Credit[]
+  suppliers    Supplier[]
+  categories   Category[]
+
+  @@map("companies")
+  @@schema("public")
+}
+
+model CompanyUser {
+  id        String   @id @default(cuid())
+  userId    String
+  companyId String
+  role      String   @default("viewer") // owner, admin, viewer
+  createdAt DateTime @default(now())
+
+  // Relaciones
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@map("company_users")
+  @@schema("public")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  companyId String
+  name      String
+  type      String   // income, expense
+  color     String?  // hex color
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([companyId, name, type])
+  @@map("categories")
+  @@schema("public")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  companyId   String
+  userId      String
+  type        String   // income, expense
+  amount      Int      // stored in cents
+  currency    String   @default("CLP")
+  description String
+  categoryId  String?
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@map("transactions")
+  @@schema("public")
+}
+
+model Check {
+  id          String   @id @default(cuid())
+  companyId   String
+  userId      String
+  number      String
+  amount      Int      // stored in cents
+  currency    String   @default("CLP")
+  bank        String
+  issueDate   DateTime
+  dueDate     DateTime
+  status      String   @default("pending") // pending, paid, rejected, cancelled
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("checks")
+  @@schema("public")
+}
+
+model Credit {
+  id            String   @id @default(cuid())
+  companyId     String
+  userId        String
+  name          String
+  amount        Int      // stored in cents
+  currency      String   @default("CLP")
+  interestRate  Float    @default(0) // annual interest rate
+  term          Int      // months
+  monthlyPayment Int     // stored in cents
+  startDate     DateTime
+  endDate       DateTime
+  status        String   @default("active") // active, paid, defaulted
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relaciones
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("credits")
+  @@schema("public")
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  companyId   String
+  userId      String
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  rut         String?  // Chilean tax ID
+  contactName String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("suppliers")
+  @@schema("public")
+}

@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Premium warm neutral color palette inspired by luxury design */
+    --background: 220 20% 98%;
+    --foreground: 220 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+    --primary: 220 85% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 20% 95%;
+    --secondary-foreground: 220 15% 15%;
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 220 90% 95%;
+    --accent-foreground: 220 85% 58%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 220 85% 58%;
+    --radius: 0.75rem;
+    /* Updated chart colors: blue gradient for income, subtle red for expenses */
+    --chart-income: 217 91% 60%; /* Matches blue-500 from income card */
+    --chart-income-light: 217 91% 70%; /* Lighter blue for gradient top */
+    --chart-expenses: 347 77% 60%; /* Matches rose-500 from expenses card */
+    --chart-expenses-light: 347 77% 70%; /* Lighter rose for gradient top */
+    --chart-3: 220 70% 50%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+
+  .dark {
+    /* Premium dark mode with sophisticated blacks and warm accents */
+    --background: 220 20% 8%;
+    --foreground: 220 20% 95%;
+    --card: 220 15% 12%;
+    --card-foreground: 220 20% 95%;
+    --popover: 220 15% 12%;
+    --popover-foreground: 220 20% 95%;
+    --primary: 220 85% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 220 20% 95%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 220 15% 22%;
+    --accent-foreground: 220 85% 58%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 220 85% 58%;
+    /* Dark mode chart colors with same gradient approach */
+    --chart-income: 217 91% 65%;
+    --chart-income-light: 217 91% 75%;
+    --chart-expenses: 347 77% 65%;
+    --chart-expenses-light: 347 77% 75%;
+    --chart-3: 220 70% 50%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Add smooth transitions and premium animations */
+@layer utilities {
+  .transition-luxury {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .card-luxury {
+    @apply transition-luxury hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-sm bg-opacity-80;
+  }
+
+  /* Added blue gradient utilities for buttons and UI elements */
+  .gradient-blue {
+    @apply bg-gradient-to-r from-blue-600 to-blue-500;
+  }
+
+  .gradient-blue-hover {
+    @apply hover:from-blue-700 hover:to-blue-600;
+  }
+}
