@@ -1,5 +1,11 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 
@@ -20,7 +26,8 @@ export default function AuthCodeError() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground text-center">
-            No se pudo completar el proceso de autenticación. Esto puede deberse a:
+            No se pudo completar el proceso de autenticación. Esto puede deberse
+            a:
           </p>
           <ul className="text-sm text-muted-foreground space-y-1">
             <li>• El código de autorización ha expirado</li>
@@ -29,14 +36,10 @@ export default function AuthCodeError() {
           </ul>
           <div className="flex flex-col space-y-2">
             <Button asChild className="w-full">
-              <Link href="/login">
-                Intentar nuevamente
-              </Link>
+              <Link href="/login">Intentar nuevamente</Link>
             </Button>
             <Button variant="outline" asChild className="w-full">
-              <Link href="/">
-                Volver al inicio
-              </Link>
+              <Link href="/">Volver al inicio</Link>
             </Button>
           </div>
         </CardContent>

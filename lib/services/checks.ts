@@ -39,7 +39,7 @@ export async function getChecks(
   } = {}
 ): Promise<Check[]> {
   const supabase = createClient()
-  
+
   let query = supabase
     .from('checks')
     .select('*')
@@ -63,7 +63,10 @@ export async function getChecks(
   }
 
   if (options.offset) {
-    query = query.range(options.offset, options.offset + (options.limit || 10) - 1)
+    query = query.range(
+      options.offset,
+      options.offset + (options.limit || 10) - 1
+    )
   }
 
   const { data, error } = await query
@@ -73,18 +76,22 @@ export async function getChecks(
     return []
   }
 
-  return data?.map(check => ({
-    ...check,
-    issueDate: new Date(check.issue_date),
-    dueDate: new Date(check.due_date),
-    createdAt: new Date(check.created_at),
-    updatedAt: new Date(check.updated_at),
-  })) || []
+  return (
+    data?.map(check => ({
+      ...check,
+      issueDate: new Date(check.issue_date),
+      dueDate: new Date(check.due_date),
+      createdAt: new Date(check.created_at),
+      updatedAt: new Date(check.updated_at),
+    })) || []
+  )
 }
 
-export async function createCheck(data: CreateCheckData): Promise<Check | null> {
+export async function createCheck(
+  data: CreateCheckData
+): Promise<Check | null> {
   const supabase = createClient()
-  
+
   const { data: check, error } = await supabase
     .from('checks')
     .insert({
@@ -120,7 +127,7 @@ export async function updateCheckStatus(
   status: 'pending' | 'paid' | 'rejected' | 'cancelled'
 ): Promise<Check | null> {
   const supabase = createClient()
-  
+
   const { data: check, error } = await supabase
     .from('checks')
     .update({ status })
@@ -142,9 +149,12 @@ export async function updateCheckStatus(
   }
 }
 
-export async function getUpcomingChecks(companyId: string, days: number = 7): Promise<Check[]> {
+export async function getUpcomingChecks(
+  companyId: string,
+  days: number = 7
+): Promise<Check[]> {
   const supabase = createClient()
-  
+
   const endDate = new Date()
   endDate.setDate(endDate.getDate() + days)
 
@@ -162,18 +172,20 @@ export async function getUpcomingChecks(companyId: string, days: number = 7): Pr
     return []
   }
 
-  return data?.map(check => ({
-    ...check,
-    issueDate: new Date(check.issue_date),
-    dueDate: new Date(check.due_date),
-    createdAt: new Date(check.created_at),
-    updatedAt: new Date(check.updated_at),
-  })) || []
+  return (
+    data?.map(check => ({
+      ...check,
+      issueDate: new Date(check.issue_date),
+      dueDate: new Date(check.due_date),
+      createdAt: new Date(check.created_at),
+      updatedAt: new Date(check.updated_at),
+    })) || []
+  )
 }
 
 export async function getOverdueChecks(companyId: string): Promise<Check[]> {
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('checks')
     .select('*')
@@ -187,11 +199,13 @@ export async function getOverdueChecks(companyId: string): Promise<Check[]> {
     return []
   }
 
-  return data?.map(check => ({
-    ...check,
-    issueDate: new Date(check.issue_date),
-    dueDate: new Date(check.due_date),
-    createdAt: new Date(check.created_at),
-    updatedAt: new Date(check.updated_at),
-  })) || []
+  return (
+    data?.map(check => ({
+      ...check,
+      issueDate: new Date(check.issue_date),
+      dueDate: new Date(check.due_date),
+      createdAt: new Date(check.created_at),
+      updatedAt: new Date(check.updated_at),
+    })) || []
+  )
 }

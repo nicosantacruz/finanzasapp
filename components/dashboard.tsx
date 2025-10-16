@@ -1,21 +1,22 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { DashboardNav } from "@/components/dashboard-nav"
-import { MetricCard } from "@/components/metric-card"
-import { IncomeExpensesChart } from "@/components/income-expenses-chart"
-import { CompanySummary } from "@/components/company-summary"
-import { RecentTransactions } from "@/components/recent-transactions"
-import { TrendingUp, TrendingDown, DollarSign, Wallet } from "lucide-react"
-import { useDashboardData } from "@/hooks/use-dashboard-data"
-import { useCompany } from "@/contexts/company-context"
-import { formatMoney } from "@/lib/money"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DashboardHeader } from '@/components/dashboard-header'
+import { DashboardNav } from '@/components/dashboard-nav'
+import { MetricCard } from '@/components/metric-card'
+import { IncomeExpensesChart } from '@/components/income-expenses-chart'
+import { CompanySummary } from '@/components/company-summary'
+import { RecentTransactions } from '@/components/recent-transactions'
+import { TrendingUp, TrendingDown, DollarSign, Wallet } from 'lucide-react'
+import { useDashboardData } from '@/hooks/use-dashboard-data'
+import { useCompany } from '@/contexts/company-context'
+import { formatMoney } from '@/lib/money'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Dashboard() {
   const { selectedCompany } = useCompany()
-  const { metrics, recentTransactions, monthlyData, loading, error } = useDashboardData()
+  const { metrics, recentTransactions, monthlyData, loading, error } =
+    useDashboardData()
 
   if (!selectedCompany) {
     return (
@@ -145,7 +146,10 @@ export default function Dashboard() {
             />
             <MetricCard
               title="Gastos Totales"
-              value={formatMoney(metrics.totalExpenses, selectedCompany.currency)}
+              value={formatMoney(
+                metrics.totalExpenses,
+                selectedCompany.currency
+              )}
               change={metrics.expenseChange}
               changeType="negative"
               icon={TrendingDown}
@@ -154,7 +158,7 @@ export default function Dashboard() {
               title="Balance Neto"
               value={formatMoney(metrics.netBalance, selectedCompany.currency)}
               change={metrics.balanceChange}
-              changeType={metrics.netBalance >= 0 ? "positive" : "negative"}
+              changeType={metrics.netBalance >= 0 ? 'positive' : 'negative'}
               icon={DollarSign}
             />
             <MetricCard

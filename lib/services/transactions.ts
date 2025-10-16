@@ -24,10 +24,11 @@ export async function getTransactions(
   } = {}
 ): Promise<Transaction[]> {
   const supabase = createClient()
-  
+
   let query = supabase
     .from('transactions')
-    .select(`
+    .select(
+      `
       id,
       type,
       amount,
@@ -36,7 +37,8 @@ export async function getTransactions(
       category:categories(name),
       date,
       createdAt:created_at
-    `)
+    `
+    )
     .eq('company_id', companyId)
     .order('date', { ascending: false })
 
@@ -61,7 +63,10 @@ export async function getTransactions(
   }
 
   if (options.offset) {
-    query = query.range(options.offset, options.offset + (options.limit || 10) - 1)
+    query = query.range(
+      options.offset,
+      options.offset + (options.limit || 10) - 1
+    )
   }
 
   const { data, error } = await query
@@ -74,9 +79,11 @@ export async function getTransactions(
   return data || []
 }
 
-export async function createTransaction(data: CreateTransactionData): Promise<Transaction | null> {
+export async function createTransaction(
+  data: CreateTransactionData
+): Promise<Transaction | null> {
   const supabase = createClient()
-  
+
   const { data: transaction, error } = await supabase
     .from('transactions')
     .insert({
@@ -89,7 +96,8 @@ export async function createTransaction(data: CreateTransactionData): Promise<Tr
       category_id: data.categoryId,
       date: data.date.toISOString(),
     })
-    .select(`
+    .select(
+      `
       id,
       type,
       amount,
@@ -98,7 +106,8 @@ export async function createTransaction(data: CreateTransactionData): Promise<Tr
       category:categories(name),
       date,
       createdAt:created_at
-    `)
+    `
+    )
     .single()
 
   if (error) {
@@ -114,7 +123,7 @@ export async function updateTransaction(
   data: Partial<CreateTransactionData>
 ): Promise<Transaction | null> {
   const supabase = createClient()
-  
+
   const updateData: any = {}
   if (data.type) updateData.type = data.type
   if (data.amount !== undefined) updateData.amount = data.amount
@@ -127,7 +136,8 @@ export async function updateTransaction(
     .from('transactions')
     .update(updateData)
     .eq('id', id)
-    .select(`
+    .select(
+      `
       id,
       type,
       amount,
@@ -136,7 +146,8 @@ export async function updateTransaction(
       category:categories(name),
       date,
       createdAt:created_at
-    `)
+    `
+    )
     .single()
 
   if (error) {
@@ -149,11 +160,8 @@ export async function updateTransaction(
 
 export async function deleteTransaction(id: string): Promise<boolean> {
   const supabase = createClient()
-  
-  const { error } = await supabase
-    .from('transactions')
-    .delete()
-    .eq('id', id)
+
+  const { error } = await supabase.from('transactions').delete().eq('id', id)
 
   if (error) {
     console.error('Error deleting transaction:', error)
@@ -163,9 +171,12 @@ export async function deleteTransaction(id: string): Promise<boolean> {
   return true
 }
 
-export async function getTransactionStats(companyId: string, period: 'month' | 'year' = 'month') {
+export async function getTransactionStats(
+  companyId: string,
+  period: 'month' | 'year' = 'month'
+) {
   const supabase = createClient()
-  
+
   const startDate = new Date()
   if (period === 'month') {
     startDate.setMonth(startDate.getMonth() - 1)
@@ -184,13 +195,15 @@ export async function getTransactionStats(companyId: string, period: 'month' | '
     return { totalIncome: 0, totalExpenses: 0, netProfit: 0 }
   }
 
-  const totalIncome = data
-    ?.filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0) || 0
+  const totalIncome =
+    data
+      ?.filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0) || 0
 
-  const totalExpenses = data
-    ?.filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0) || 0
+  const totalExpenses =
+    data
+      ?.filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + t.amount, 0) || 0
 
   return {
     totalIncome,

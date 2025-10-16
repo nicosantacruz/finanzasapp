@@ -36,7 +36,7 @@ export async function getSuppliers(
   } = {}
 ): Promise<Supplier[]> {
   const supabase = createClient()
-  
+
   let query = supabase
     .from('suppliers')
     .select('*')
@@ -44,7 +44,9 @@ export async function getSuppliers(
     .order('name', { ascending: true })
 
   if (options.search) {
-    query = query.or(`name.ilike.%${options.search}%,contact_name.ilike.%${options.search}%`)
+    query = query.or(
+      `name.ilike.%${options.search}%,contact_name.ilike.%${options.search}%`
+    )
   }
 
   if (options.limit) {
@@ -52,7 +54,10 @@ export async function getSuppliers(
   }
 
   if (options.offset) {
-    query = query.range(options.offset, options.offset + (options.limit || 10) - 1)
+    query = query.range(
+      options.offset,
+      options.offset + (options.limit || 10) - 1
+    )
   }
 
   const { data, error } = await query
@@ -62,16 +67,18 @@ export async function getSuppliers(
     return []
   }
 
-  return data?.map(supplier => ({
-    ...supplier,
-    createdAt: new Date(supplier.created_at),
-    updatedAt: new Date(supplier.updated_at),
-  })) || []
+  return (
+    data?.map(supplier => ({
+      ...supplier,
+      createdAt: new Date(supplier.created_at),
+      updatedAt: new Date(supplier.updated_at),
+    })) || []
+  )
 }
 
 export async function getSupplierById(id: string): Promise<Supplier | null> {
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('suppliers')
     .select('*')
@@ -90,9 +97,11 @@ export async function getSupplierById(id: string): Promise<Supplier | null> {
   }
 }
 
-export async function createSupplier(data: CreateSupplierData): Promise<Supplier | null> {
+export async function createSupplier(
+  data: CreateSupplierData
+): Promise<Supplier | null> {
   const supabase = createClient()
-  
+
   const { data: supplier, error } = await supabase
     .from('suppliers')
     .insert({
@@ -126,7 +135,7 @@ export async function updateSupplier(
   data: Partial<CreateSupplierData>
 ): Promise<Supplier | null> {
   const supabase = createClient()
-  
+
   const updateData: any = {}
   if (data.name) updateData.name = data.name
   if (data.email !== undefined) updateData.email = data.email
@@ -157,11 +166,8 @@ export async function updateSupplier(
 
 export async function deleteSupplier(id: string): Promise<boolean> {
   const supabase = createClient()
-  
-  const { error } = await supabase
-    .from('suppliers')
-    .delete()
-    .eq('id', id)
+
+  const { error } = await supabase.from('suppliers').delete().eq('id', id)
 
   if (error) {
     console.error('Error deleting supplier:', error)
@@ -171,12 +177,16 @@ export async function deleteSupplier(id: string): Promise<boolean> {
   return true
 }
 
-export async function getSupplierTransactions(supplierId: string, companyId: string) {
+export async function getSupplierTransactions(
+  supplierId: string,
+  companyId: string
+) {
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('transactions')
-    .select(`
+    .select(
+      `
       id,
       type,
       amount,
@@ -184,7 +194,8 @@ export async function getSupplierTransactions(supplierId: string, companyId: str
       description,
       date,
       createdAt:created_at
-    `)
+    `
+    )
     .eq('company_id', companyId)
     .ilike('description', `%${supplierId}%`) // Buscar por ID en descripción
     .order('date', { ascending: false })
@@ -200,7 +211,7 @@ export async function getSupplierTransactions(supplierId: string, companyId: str
 
 export async function getSupplierStats(companyId: string) {
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('suppliers')
     .select('id')
@@ -212,7 +223,7 @@ export async function getSupplierStats(companyId: string) {
   }
 
   const totalSuppliers = data?.length || 0
-  
+
   // Contar proveedores con transacciones recientes (últimos 30 días)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)

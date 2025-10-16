@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { useCompany } from '@/contexts/company-context'
-import { getCompanyMetrics, getRecentTransactions, getMonthlyData } from '@/lib/services/companies'
+import {
+  getCompanyMetrics,
+  getRecentTransactions,
+  getMonthlyData,
+} from '@/lib/services/companies'
 import type { CompanyMetrics } from '@/types/company'
 import type { Transaction } from '@/types/transaction'
 

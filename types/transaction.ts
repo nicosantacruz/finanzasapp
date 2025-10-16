@@ -1,7 +1,7 @@
 export interface Transaction {
   id: string
   companyId: string
-  type: "income" | "expense"
+  type: 'income' | 'expense'
   amount: number
   currency: string
   description: string

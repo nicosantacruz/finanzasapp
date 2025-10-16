@@ -39,7 +39,7 @@ export async function getCredits(
   } = {}
 ): Promise<Credit[]> {
   const supabase = createClient()
-  
+
   let query = supabase
     .from('credits')
     .select('*')
@@ -55,7 +55,10 @@ export async function getCredits(
   }
 
   if (options.offset) {
-    query = query.range(options.offset, options.offset + (options.limit || 10) - 1)
+    query = query.range(
+      options.offset,
+      options.offset + (options.limit || 10) - 1
+    )
   }
 
   const { data, error } = await query
@@ -65,22 +68,26 @@ export async function getCredits(
     return []
   }
 
-  return data?.map(credit => ({
-    ...credit,
-    startDate: new Date(credit.start_date),
-    endDate: new Date(credit.end_date),
-    createdAt: new Date(credit.created_at),
-    updatedAt: new Date(credit.updated_at),
-  })) || []
+  return (
+    data?.map(credit => ({
+      ...credit,
+      startDate: new Date(credit.start_date),
+      endDate: new Date(credit.end_date),
+      createdAt: new Date(credit.created_at),
+      updatedAt: new Date(credit.updated_at),
+    })) || []
+  )
 }
 
-export async function createCredit(data: CreateCreditData): Promise<Credit | null> {
+export async function createCredit(
+  data: CreateCreditData
+): Promise<Credit | null> {
   const supabase = createClient()
-  
+
   // Calcular fecha de fin y pago mensual
   const endDate = new Date(data.startDate)
   endDate.setMonth(endDate.getMonth() + data.term)
-  
+
   // Calcular pago mensual usando fórmula de amortización
   const monthlyPayment = calculateMonthlyPayment(
     data.amount,
@@ -125,7 +132,7 @@ export async function updateCreditStatus(
   status: 'active' | 'paid' | 'defaulted'
 ): Promise<Credit | null> {
   const supabase = createClient()
-  
+
   const { data: credit, error } = await supabase
     .from('credits')
     .update({ status })
@@ -147,9 +154,12 @@ export async function updateCreditStatus(
   }
 }
 
-export async function getUpcomingPayments(companyId: string, days: number = 30): Promise<Credit[]> {
+export async function getUpcomingPayments(
+  companyId: string,
+  days: number = 30
+): Promise<Credit[]> {
   const supabase = createClient()
-  
+
   const endDate = new Date()
   endDate.setDate(endDate.getDate() + days)
 
@@ -166,30 +176,37 @@ export async function getUpcomingPayments(companyId: string, days: number = 30):
     return []
   }
 
-  return data?.map(credit => ({
-    ...credit,
-    startDate: new Date(credit.start_date),
-    endDate: new Date(credit.end_date),
-    createdAt: new Date(credit.created_at),
-    updatedAt: new Date(credit.updated_at),
-  })) || []
+  return (
+    data?.map(credit => ({
+      ...credit,
+      startDate: new Date(credit.start_date),
+      endDate: new Date(credit.end_date),
+      createdAt: new Date(credit.created_at),
+      updatedAt: new Date(credit.updated_at),
+    })) || []
+  )
 }
 
-function calculateMonthlyPayment(principal: number, annualRate: number, months: number): number {
+function calculateMonthlyPayment(
+  principal: number,
+  annualRate: number,
+  months: number
+): number {
   if (annualRate === 0) {
     return Math.round(principal / months)
   }
-  
+
   const monthlyRate = annualRate / 100 / 12
-  const payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) / 
-                 (Math.pow(1 + monthlyRate, months) - 1)
-  
+  const payment =
+    (principal * (monthlyRate * Math.pow(1 + monthlyRate, months))) /
+    (Math.pow(1 + monthlyRate, months) - 1)
+
   return Math.round(payment)
 }
 
 export async function getCreditStats(companyId: string) {
   const supabase = createClient()
-  
+
   const { data, error } = await supabase
     .from('credits')
     .select('amount, monthly_payment, status')
@@ -202,7 +219,10 @@ export async function getCreditStats(companyId: string) {
 
   const activeCredits = data?.filter(c => c.status === 'active') || []
   const totalDebt = activeCredits.reduce((sum, c) => sum + c.amount, 0)
-  const monthlyPayments = activeCredits.reduce((sum, c) => sum + c.monthly_payment, 0)
+  const monthlyPayments = activeCredits.reduce(
+    (sum, c) => sum + c.monthly_payment,
+    0
+  )
 
   return {
     totalDebt,
